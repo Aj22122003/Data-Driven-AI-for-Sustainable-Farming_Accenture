@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yield Prediction</title>
+<style>
+   
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-sizing: border-box;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Yield Prediction</h1>
+    <form id="yieldPredictionForm">
+        <label for="Temp">Temperature:</label>
+        <input type="number" id="Temp" name="Temp" required>
+
+        <label for="Precipitation">Precipitation:</label>
+        <input type="number" id="Precipitation" name="Precipitation" required>
+
+        <label for="SOM">SOM (Soil Organic Matter):</label>
+        <input type="number" id="SOM" name="SOM" required>
+
+        <label for="AWC">AWC (Available Water Capacity):</label>
+        <input type="number" id="AWC" name="AWC" required>
+
+        <label for="Land_Area">Land Area:</label>
+        <input type="number" id="Land_Area" name="Land_Area" required>
+
+        <label for="VPD">VPD (Vapor Pressure Deficit):</label>
+        <input type="number" id="VPD" name="VPD" required>
+
+        <button type="button" onclick="submitYieldForm()">Submit</button>
+    </form>
+</div>
+
+<script>
+    function submitYieldForm() {
+        const formData = {
+            Temp: parseFloat(document.getElementById('Temp').value),
+            Precipitation: parseFloat(document.getElementById('Precipitation').value),
+            SOM: parseFloat(document.getElementById('SOM').value),
+            AWC: parseFloat(document.getElementById('AWC').value),
+            Land_Area: parseFloat(document.getElementById('Land_Area').value),
+            VPD: parseFloat(document.getElementById('VPD').value)
+        };
+
+        fetch('/predict/yield', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle response data as needed
+            console.log(data);
+            alert('Yield prediction result: ' + JSON.stringify(data));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred, please try again.');
+        });
+    }
+</script>
+</body>
+</html>
