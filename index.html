@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Prediction and Price Estimation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+      body {
+          background: url(https://c4.wallpaperflare.com/wallpaper/549/835/824/nature-wheat-field-cereal-wallpaper-preview.jpg);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background-color: #f2f2f2;
+          color: black; /* Text color set to black */
+      }
+
+      .card {
+          width: 100%;
+          max-width: 800px;
+          background-color: #fff;
+          border: none;
+          border-radius: 10px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          margin: auto;
+      }
+
+      .card-title {
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          color: #3498db; /* Light Blue */
+      }
+
+      .card-header {
+          border-radius: 10px 10px 0 0;
+          justify-content: center;
+          align-items: center;
+          background-color: #ffffff; /* Light Blue */
+          color: #291313;
+      }
+
+      .form-group label {
+          font-size: 20px;
+          color: #21a2a2; /* Gray color for labels */
+      }
+
+      .form-control {
+          color:#025a5a; /* Gray color for input text */
+          height: 50px;
+      }
+
+      .form-control::placeholder {
+          color: #1c1a1a; /* Gray color for placeholder text */
+      }
+
+      .card-body {
+          padding: 30px;
+          background-color: #87CEFA; /* Light Sky Blue */
+          color: black; /* Text color set to black */
+      }
+
+      .btn-primary {
+          background-color: #3498db; /* Light Blue */
+          border-color: #3498db; /* Light Blue */
+      }
+
+      .btn-primary:hover {
+          background-color: #5cb85c; /* Lighter Green */
+          border-color: #4cae4c; /* Darker Green */
+      }
+
+      .invalid-feedback {
+          color: #dc3545;
+      }
+
+      #result-container {
+          margin-top: 30px;
+      }
+
+      .table {
+          font-size: 14px;
+      }
+
+      .table th {
+          font-weight: 600;
+          background-color: #000000;
+          border-top: none;
+      }
+
+      .table td {
+          border-top: none;
+      }
+  </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title">Crop Forecasting and Estimation</h4>
+                    </div>
+                    <div class="card-body ">
+                        <form method="post" id="prediction-form" class="needs-validation" novalidate>
+                            <div class="form-group">
+                              <label for="n-input">N value:</label>
+                              <input type="number" step="0.01" class="form-control" name="n" id="n-input" placeholder="Enter N value" required>
+                            </div>
+                            <div class="form-group">
+                              <label for="p-input">P value:</label>
+                              <input type="number" step="0.01" class="form-control" name="p" id="p-input" placeholder="Enter P value" required>
+                            </div>
+                            <div class="form-group">
+                              <label for="k-input">K value:</label>
+                              <input type="number" step="0.01" class="form-control" name="k" id="k-input" placeholder="Enter K value" required>
+                            </div>
+                            <div class="form-group">
+                              <label for="district-input-text">Select a District:</label>
+                              <input type="text" class="form-control" name="district" id="district-input-text" placeholder="Enter District Name" required>
+                              <select id="district-input" name="district" class="form-control" required>
+                                <option value="">Select a district</option>
+                                <option value="Ariyalur">Ariyalur</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Coimbatore">Coimbatore</option>
+                                <option value="Ariyalur">Ariyalur</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Coimbatore">Coimbatore</option>
+                                <option value="Cuddalore">Cuddalore</option>
+                                <option value="Dharmapuri">Dharmapuri</option>
+                                <option value="Dindigul">Dindigul</option>
+                                <option value="Erode">Erode</option>
+                                <option value="Kancheepuram">Kancheepuram</option>
+                                <option value="Kanyakumari">Kanyakumari</option>
+                                <option value="Karur">Karur</option>
+                                <option value="Krishnagiri">Krishnagiri</option>
+                                <option value="Madurai">Madurai</option>
+                                <option value="Nagapattinam">Nagapattinam</option>
+                                <option value="Namakkal">Namakkal</option>
+                                <option value="Perambalur">Perambalur</option>
+                                <option value="Pudukkotai">Pudukkotai</option>
+                                <option value="Ramanathapuram">Ramanathapuram</option>
+                                <option value="Salem">Salem</option>
+                                <option value="Sivagangai">Sivagangai</option>
+                                <option value="Thanjavur">Thanjavur</option>
+                                <option value="The Nilgiris">The Nilgiris</option>
+                                <option value="Theni">Theni</option>
+                                <option value="Thiruvallur">Thiruvallur</option>
+                                <option value="Thiruvarur">Thiruvarur</option>
+                                <option value="Tiruchirapalli">Tiruchirapalli</option>
+                                <option value="Tirunelveli">Tirunelveli</option>
+                                <option value="Tiruppur">Tiruppur</option>
+                                <option value="Tiruvannamalai">Tiruvannamalai</option>
+                                <option value="Tuticorin">Tuticorin</option>
+                                <option value="Vellore">Vellore</option>
+                                <option value="Villupuram">Villupuram</option>
+                                <option value="Virudhunagar">Virudhunagar</option>
+                              
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <label for="rainfall-input">Rainfall (in mm):</label>
+                              <input type="number" step="0.01" class="form-control" name="rainfall" id="rainfall-input" placeholder="Enter Rainfall" required>
+                            </div>
+                            <button type="submit" name="submit" class="btn btn-primary">Predict</button>
+                          </form>                          
+                    </div>
+                    <!-- <div id="result-container" class="container mt-5">
+                        <h3>Prediction Results:</h3>
+                        <table id="prediction-table" class="table table-striped mt-3">
+                          <thead>
+                            <tr>
+                              <th>Parameter</th>
+                              <th>Value</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Crop</td>
+                              <td id="crop"></td>
+                            </tr>
+                            <tr>
+                              <td>District</td>
+                              <td id="district"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <h3>Price Estimation Results:</h3>
+                        <table id="price-table" class="table table-striped mt-3">
+                          <thead>
+                            <tr>
+                              <th>Month</th>
+                              <th>Price</th>
+                            </tr>
+                          </thead>
+                          <tbody id="price-table-body">
+                          </tbody>
+                        </table>
+                      </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="script.js"></script>
+</html>
