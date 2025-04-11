@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREDICTION RESULT</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: url(https://c4.wallpaperflare.com/wallpaper/549/835/824/nature-wheat-field-cereal-wallpaper-preview.jpg) no-repeat center center fixed;
+            background-size: cover;
+            background-blend-mode: multiply;
+        }
+
+        .card {
+            margin-top: 50px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        .card-header {
+            flex: 1;
+            flex-direction: column;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            background-color: #001f3f; /* Dark blue */
+            color: white;
+        }
+
+        .card1 {
+            display: flex;
+            flex-direction: column;
+            margin-top: 50px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        .card-header1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            background-color: #add8e6; /* Light blue */
+            flex: 2;
+        }
+
+        .card-body1 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            flex: 2;
+            background-color: white;
+            height: 700px;
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #001f3f; /* Dark blue */
+            color: white;
+            font-weight: bold;
+        }
+
+        /* table row styling */
+        tr:nth-child(even) {
+            background-color: #0a3f74; /* Dark blue */
+            color: white;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #add8e6; /* Light blue */
+            color: #0754a1; /* Dark blue */
+        }
+
+        td {
+            color: #000000; /* Dark blue */
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #myChartContainer {
+            flex: 1;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="card">
+                <div class="card-header">
+                    <h3>The predicted crop is {{ result['crop'] }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="{{ url_for('static', filename=result['crop'] + '.jpeg') }}" alt="{{ result['crop'] }}" width="400"> <!-- Increased image size to 400 pixels -->
+                        </div>
+                        <div class="col-md-6">
+                            <p>{{ crop_info | selectattr('crop', 'equalto', result['crop']) | map(attribute='info') | join }}</p>
+                        </div>
+                    </div>
+                    <table class="table mt-4">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Price(Rs per quintal)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in result['price_data'] %}
+                                <tr>
+                                    <td>{{ data['month'] }}</td>
+                                    <td>{{ "{:.2f}".format(data['price']) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="card1">
+                <div class="card-header1">
+                    <h3>Price Trend</h3>
+                </div>
+                <div class="card-body1">
+                    <canvas id="myChart" height="350"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        var months = [
+            {% for data in result['price_data'] %}
+                '{{ data["month"] }}',
+            {% endfor %}
+        ];
+
+        var prices = [
+            {% for data in result['price_data'] %}
+                {{ data["price"] }},
+            {% endfor %}
+        ];
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Price Trend',
+                    data: prices,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 50
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+</html>
