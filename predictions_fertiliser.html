@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fertilizer Prediction</title>
+<style>
+    /* Add your CSS styling here */
+    /* This is just a basic example, you can customize it further */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    input[type="text"],
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-sizing: border-box;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Fertilizer Prediction</h1>
+    <form id="predictionForm">
+        <label for="temperature">Temperature:</label>
+        <input type="text" id="temperature" name="temperature" required>
+
+        <label for="humidity">Humidity:</label>
+        <input type="text" id="humidity" name="humidity" required>
+
+        <label for="moisture">Moisture:</label>
+        <input type="text" id="moisture" name="moisture" required>
+
+        <label for="soilType">Soil Type:</label>
+        <select id="soilType" name="soilType" required>
+            <option value="Sandy">Sandy</option>
+            <option value="Clayey">Clayey</option>
+            <option value="Loamy">Loamy</option>
+            <option value="Red">Red</option>
+            <option value="Black">Black</option>
+            <!-- Add more options as needed -->
+        </select>
+
+        <label for="cropType">Crop Type:</label>
+        <select id="cropType" name="cropType" required>
+            <option value="Barley">Barley</option>
+            <option value="Bengal Gram">Bengal Gram</option>
+            <option value="Cotton">Cotton</option>
+            <option value="Ground Nuts">Ground Nuts</option>
+            <option value="Maize">Maize</option>
+            <option value="Millets">Millets</option>
+            <option value="Oil seeds">Oil seeds</option>
+            <option value="Paddy">Paddy</option>
+            <option value="Pulses">Pulses</option>
+            <option value="Red Gram">Red Gram</option>
+            <option value="Sugarcane">Sugarcane</option>
+            <option value="Tobacco">Tobacco</option>
+            <option value="Wheat">Wheat</option>
+            <!-- Add more options as needed -->
+        </select>
+
+        <label for="N">Nitrogen:</label>
+        <input type="text" id="N" name="N" required>
+
+        <label for="K">Potassium:</label>
+        <input type="text" id="K" name="K" required>
+
+        <label for="P">Phosphorous:</label>
+        <input type="text" id="P" name="P" required>
+
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+</div>
+
+<script>
+    function submitForm() {
+        const formData = {
+            temperature: parseFloat(document.getElementById('temperature').value),
+            humidity: parseFloat(document.getElementById('humidity').value),
+            moisture: parseFloat(document.getElementById('moisture').value),
+            soilType: document.getElementById('soilType').value,
+            cropType: document.getElementById('cropType').value,
+            N: parseFloat(document.getElementById('N').value),
+            K: parseFloat(document.getElementById('K').value),
+            P: parseFloat(document.getElementById('P').value)
+        };
+
+        fetch('http://127.0.0.1:5000/predict/fertilizer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle response data as needed
+            console.log(data);
+            alert('Prediction result: ' + JSON.stringify(data));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred, please try again.');
+        });
+    }
+</script>
+</body>
+</html>
